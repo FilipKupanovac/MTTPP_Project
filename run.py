@@ -11,3 +11,5 @@ with Booking() as bot:
     bot.select_adults(5)
     # bot.select_children(1)
     bot.click_search()
+
+    bot.apply_filtration()
