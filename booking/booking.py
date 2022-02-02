@@ -132,4 +132,11 @@ class Booking(webdriver.Chrome):
         hotel_boxes = self.find_element(By.CLASS_NAME, '_814193827'
         )
         report = BookingReport(hotel_boxes, driver=self)
-        report.pull_titles()
+        hotels= report.pull_titles()
+        #print("BOOKING.py HOTELS: ")
+        #print(hotels)
+        return hotels
+
+    def getElement(self, by, identificator):
+        el = self.find_element(by, identificator)
+        return el

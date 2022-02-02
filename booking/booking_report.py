@@ -7,6 +7,7 @@ class BookingReport:
     def __init__(self, boxes_section_element: WebElement, driver: WebDriver):
         self.boxes_section_element = boxes_section_element
         self.driver = driver
+        self.hotels = []
         self.deal_boxes = self.pull_deal_boxes()
 
     def pull_deal_boxes(self):
@@ -16,4 +17,6 @@ class BookingReport:
         for deal_box in self.deal_boxes:
             self.driver.implicitly_wait(10)
             hotel_name = deal_box.find_element(By.CLASS_NAME, '_c445487e2').get_attribute('innerHTML').strip()
-            print(hotel_name)
+            #print(hotel_name)
+            self.hotels.append(hotel_name)
+        return self.hotels

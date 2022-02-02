@@ -16,6 +16,6 @@ class BookingFiltration:
                     star_element.click()
 
     def sort_price_lowest_first(self):
-        self.driver.implicitly_wait(3)
+        self.driver.implicitly_wait(5)
         element = self.driver.find_element(By.CSS_SELECTOR, 'li[data-id="price"]')
         element.click()
