@@ -1,15 +1,20 @@
+import time
+
 from selenium import webdriver
 import os
 import booking.constants as const
 from selenium.webdriver.common.by import By
 from booking.booking_filtration import BookingFiltration
+from booking.booking_report import BookingReport
 
 class Booking(webdriver.Chrome):
     def __init__(self, driver_path=r"D:\User\Downloads\Filip\SeleniumDrivers", teardown=False):
         self.driver_path = driver_path
         self.teardown = teardown
         os.environ['Path'] += self.driver_path
-        super(Booking, self).__init__()
+        options = webdriver.ChromeOptions()
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        super(Booking, self).__init__(options=options)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.teardown:
@@ -121,3 +126,10 @@ class Booking(webdriver.Chrome):
         filtration.apply_star_rating(4, 5)
 
         filtration.sort_price_lowest_first()
+
+    def report_results(self):
+        time.sleep(5)
+        hotel_boxes = self.find_element(By.CLASS_NAME, '_814193827'
+        )
+        report = BookingReport(hotel_boxes, driver=self)
+        report.pull_titles()
