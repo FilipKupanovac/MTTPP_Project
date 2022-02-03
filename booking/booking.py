@@ -23,17 +23,10 @@ class Booking(webdriver.Chrome):
     def land_first_page(self):
         self.get(const.BASE_URL)
         self.maximize_window()
-        # self.implicitly_wait(15)
-        # try:
-        #    button_accept = self.find_element(By.Id, "onetrust-accept-btn-handler")
-        #    button_accept.click()
-        #    print("Hello World!")
-        # except:
-        #    print("NO COOKIES ELEMENT FOUND")
 
     def change_currency(self, currency=None):
-        currency_element = self.find_element(By.CSS_SELECTOR, 'button[data-bui-component="Modal.HeaderAsync,Tooltip"]'
-                                             )
+        currency_element = self.find_element(By.CSS_SELECTOR,
+                                             'button[data-bui-component="Modal.HeaderAsync,Tooltip"]')
         currency_element.click()
         self.implicitly_wait(5)
         selected_currency_el = self.find_element(
@@ -132,11 +125,45 @@ class Booking(webdriver.Chrome):
         hotel_boxes = self.find_element(By.CLASS_NAME, '_814193827'
         )
         report = BookingReport(hotel_boxes, driver=self)
-        hotels= report.pull_titles()
-        #print("BOOKING.py HOTELS: ")
-        #print(hotels)
+        hotels = report.pull_titles()
         return hotels
 
-    def getElement(self, by, identificator):
-        el = self.find_element(by, identificator)
-        return el
+    def get_language_value(self):
+        lang = self.find_element(By.CSS_SELECTOR, 'button[data-modal-id="language-selection"]')
+        value = lang.find_element(By.CLASS_NAME, 'bui-u-sr-only')
+        return value.get_attribute('innerHTML').strip()
+
+    def get_currency_value(self):
+        curr = self.find_element(By.CSS_SELECTOR,
+                                'button[data-bui-component="Modal.HeaderAsync,Tooltip"]')
+        value = curr.find_element(By.CSS_SELECTOR, 'span[aria-hidden="true"]')
+        return value.get_attribute('innerHTML').strip()
+
+    def check_stars_count(self, minStars=3):
+        starBoxes = []
+        self.implicitly_wait(10)
+        box = self.find_element(By.CLASS_NAME, '_814193827')
+        properties = box.find_elements(By.CSS_SELECTOR, 'div[data-testid="property-card"]')
+        for accomodation in properties:
+            starBox = accomodation.find_element(By.CSS_SELECTOR, 'div[data-testid="rating-stars"]')
+            if(self.count_stars_in_starbox(starBox,minStars)):
+                starBoxes.append(starBox)
+
+        print(f"PRONADENO STARBOXA: {len(starBoxes)}")
+        return (len(starBoxes) == len(properties))
+
+    def count_stars_in_starbox(self, starbox, minCount):
+        stars = starbox.find_elements(By.CLASS_NAME, '_3ae5d40db')
+
+        if(len(stars) >= minCount):
+            return True
+        return False
+
+    def show_map(self):
+        self.implicitly_wait(5)
+        map_button = self.find_element(By.CSS_SELECTOR, 'div[data-testid="map-trigger"]')
+        map_button.click()
+        map = self.find_element(By.ID, 'b_map_container')
+        if(map.get_attribute('role') == "dialog"):
+            return True
+        return False
