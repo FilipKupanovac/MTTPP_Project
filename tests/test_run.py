@@ -1,8 +1,6 @@
-import time
-from selenium import webdriver
+# TESTING CLASS WITH ALL TESTS DEFINED AS ITS METHODS
 from booking.booking import Booking
 import unittest
-from selenium.webdriver.common.by import By
 
 
 class TestClass(unittest.TestCase):
@@ -20,10 +18,6 @@ class TestClass(unittest.TestCase):
 
         hotels = bot.report_results()
         self.assertEqual(25, int(len(hotels)), "SUCCESS: There are 25 listed hotels!")
-
-    def test_firefoxDriverRun(self):
-        self.assertTrue(True)
-        # Pokrenuti sve isto kao prvi, samo u firefox browseru
 
     def test_languageAndCurrencySet(self):
         with Booking() as bot:
@@ -44,10 +38,10 @@ class TestClass(unittest.TestCase):
                              '2022-03-19')
             bot.select_adults(3)
             bot.click_search()
-            bot.apply_filtration() #sets filter to a minimum of 4 stars
+            bot.apply_filtration()  # sets filter to a minimum of 4 stars
 
-            allPropertiesAboveCriteria = bot.check_stars_count(minStars=4)
-            self.assertTrue(allPropertiesAboveCriteria)
+            all_properties_above_criteria = bot.check_stars_count(minStars=4)
+            self.assertTrue(all_properties_above_criteria)
 
     def test_beachfrontPlaces(self):
         with Booking() as bot:

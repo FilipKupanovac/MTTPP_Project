@@ -69,9 +69,9 @@ class Booking(webdriver.Chrome):
 
     def select_adults(self, count=1):
         if count > 30:
-            mCount = 30
+            m_count = 30
         else:
-            mCount = count
+            m_count = count
 
         matching_count = False
         selection_element = self.find_element(By.ID, "xp__guests__toggle")
@@ -83,11 +83,11 @@ class Booking(webdriver.Chrome):
 
         while not matching_count:
             adults_count = adults_value_element.get_attribute("value")
-            if int(adults_count) > mCount:
+            if int(adults_count) > m_count:
                 decrease_adults_element.click()
-            if int(adults_count) == mCount:
+            if int(adults_count) == m_count:
                 matching_count = True
-            if int(adults_count) < mCount:
+            if int(adults_count) < m_count:
                 increase_adults_element.click()
 
     def click_search(self):
@@ -107,7 +107,7 @@ class Booking(webdriver.Chrome):
     def report_results(self):
         time.sleep(5)
         hotel_boxes = self.find_element(By.CLASS_NAME, '_814193827'
-        )
+                                        )
         report = BookingReport(hotel_boxes, driver=self)
         hotels = report.pull_titles()
         return hotels
@@ -119,26 +119,27 @@ class Booking(webdriver.Chrome):
 
     def get_currency_value(self):
         curr = self.find_element(By.CSS_SELECTOR,
-                                'button[data-bui-component="Modal.HeaderAsync,Tooltip"]')
+                                 'button[data-bui-component="Modal.HeaderAsync,Tooltip"]')
         value = curr.find_element(By.CSS_SELECTOR, 'span[aria-hidden="true"]')
         return value.get_attribute('innerHTML').strip()
 
     def check_stars_count(self, minStars=3):
-        starBoxes = []
+        star_boxes = []
         self.implicitly_wait(10)
         box = self.find_element(By.CLASS_NAME, '_814193827')
         properties = box.find_elements(By.CSS_SELECTOR, 'div[data-testid="property-card"]')
-        for accomodation in properties:
-            starBox = accomodation.find_element(By.CSS_SELECTOR, 'div[data-testid="rating-stars"]')
-            if(self.count_stars_in_starbox(starBox,minStars)):
-                starBoxes.append(starBox)
+        for accommodation in properties:
+            star_box = accommodation.find_element(By.CSS_SELECTOR, 'div[data-testid="rating-stars"]')
+            if self.count_stars_in_starbox(star_box, minStars):
+                star_boxes.append(star_box)
 
-        return (len(starBoxes) == len(properties))
+        return len(star_boxes) == len(properties)
 
-    def count_stars_in_starbox(self, starbox, minCount):
+    @staticmethod
+    def count_stars_in_starbox(starbox, minCount):
         stars = starbox.find_elements(By.CLASS_NAME, '_3ae5d40db')
 
-        if(len(stars) >= minCount):
+        if len(stars) >= minCount:
             return True
         return False
 
@@ -149,11 +150,11 @@ class Booking(webdriver.Chrome):
 
         for beachfront in beachfronts:
             self.implicitly_wait(7)
-            inner_HTML = beachfront.get_attribute('innerHTML').strip()
-            if inner_HTML == 'Beachfront':
+            inner_html = beachfront.get_attribute('innerHTML').strip()
+            if inner_html == 'Beachfront':
                 beachfronts_confirmed += 1
 
-        if (beachfronts_confirmed == len(beachfronts)):
+        if beachfronts_confirmed == len(beachfronts):
             return True
         return False
 
@@ -161,7 +162,7 @@ class Booking(webdriver.Chrome):
         self.implicitly_wait(5)
         map_button = self.find_element(By.CSS_SELECTOR, 'div[data-testid="map-trigger"]')
         map_button.click()
-        map = self.find_element(By.ID, 'b_map_container')
-        if(map.get_attribute('role') == "dialog"):
+        map_display = self.find_element(By.ID, 'b_map_container')
+        if map_display.get_attribute('role') == "dialog":
             return True
         return False
