@@ -19,3 +19,9 @@ class BookingFiltration:
         self.driver.implicitly_wait(5)
         element = self.driver.find_element(By.CSS_SELECTOR, 'li[data-id="price"]')
         element.click()
+
+    def apply_beachfront_filter(self):
+        self.driver.implicitly_wait(5)
+        element = self.driver.find_element(By.CSS_SELECTOR, 'div[data-filters-group="ht_beach"]')
+        filter_beach = element.find_element(By.CLASS_NAME, '_f8ff3180e')
+        filter_beach.click()

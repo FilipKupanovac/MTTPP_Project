@@ -7,8 +7,9 @@ from selenium.webdriver.common.by import By
 from booking.booking_filtration import BookingFiltration
 from booking.booking_report import BookingReport
 
+
 class Booking(webdriver.Chrome):
-    def __init__(self, driver_path=r"D:\User\Downloads\Filip\SeleniumDrivers", teardown=False):
+    def __init__(self, driver_path=r"D:\Python\WebDrivers", teardown=False):
         self.driver_path = driver_path
         self.teardown = teardown
         os.environ['Path'] += self.driver_path
@@ -25,10 +26,10 @@ class Booking(webdriver.Chrome):
         self.maximize_window()
 
     def change_currency(self, currency=None):
+        self.implicitly_wait(4)
         currency_element = self.find_element(By.CSS_SELECTOR,
                                              'button[data-bui-component="Modal.HeaderAsync,Tooltip"]')
         currency_element.click()
-        self.implicitly_wait(5)
         selected_currency_el = self.find_element(
             By.CSS_SELECTOR,
             f'a[data-modal-header-async-url-param*="selected_currency={currency}"]'
@@ -36,14 +37,15 @@ class Booking(webdriver.Chrome):
         selected_currency_el.click()
 
     def change_language(self, language=None):
+        self.implicitly_wait(4)
         language_element = self.find_element(By.CSS_SELECTOR, 'button[data-modal-id="language-selection"]')
         language_element.click()
 
-        self.implicitly_wait(5)
         selected_lang = self.find_element(By.CSS_SELECTOR, f'a[data-lang="{language}"]')
         selected_lang.click()
 
     def select_place_to_go(self, place_to_go):
+        self.implicitly_wait(4)
         search_field = self.find_element(By.ID, 'ss')
         search_field.clear()
         search_field.send_keys(place_to_go)
@@ -53,10 +55,10 @@ class Booking(webdriver.Chrome):
 
     def select_dates(self, check_in_date, check_out_date):
         self.implicitly_wait(4)
-        mrtvo_smece = self.find_element(By.ID,"onetrust-accept-btn-handler")
-        mrtvo_smece.click()
+        cookies_button = self.find_element(By.ID, "onetrust-accept-btn-handler")
+        cookies_button.click()
 
-        calendar_element = self.find_element(By.CLASS_NAME,"xp__dates__checkin")
+        calendar_element = self.find_element(By.CLASS_NAME, "xp__dates__checkin")
         calendar_element.click()
 
         check_in_element = self.find_element(By.CSS_SELECTOR, f'td[data-date="{check_in_date}"]')
@@ -88,28 +90,6 @@ class Booking(webdriver.Chrome):
             if int(adults_count) < mCount:
                 increase_adults_element.click()
 
-    #CHILDREN - NEED TO ADJUST AGE INPUT FOR EACH CHILD SEPARATELY
-    def select_children(self, count=0):
-        if count > 10:
-            mCount = 10
-        else:
-            mCount = count
-
-        matching_count = False
-
-        decrease_children_element = self.find_element(By.CSS_SELECTOR, 'button[aria-label="Decrease number of Children"]')
-        increase_children_element = self.find_element(By.CSS_SELECTOR, 'button[aria-label="Increase number of Children"]')
-        children_value_element = self.find_element(By.ID, "group_children")
-
-        while not matching_count:
-            children_count = children_value_element.get_attribute("value")
-            if int(children_count) > mCount:
-                decrease_children_element.click()
-            if int(children_count) == mCount:
-                matching_count = True
-            if int(children_count) < mCount:
-                increase_children_element.click()
-
     def click_search(self):
         search_button = self.find_element(By.CSS_SELECTOR, 'button[type="submit"]')
         search_button.click()
@@ -119,6 +99,10 @@ class Booking(webdriver.Chrome):
         filtration.apply_star_rating(4, 5)
 
         filtration.sort_price_lowest_first()
+
+    def apply_beachfront_filtration(self):
+        filtration = BookingFiltration(driver=self)
+        filtration.apply_beachfront_filter()
 
     def report_results(self):
         time.sleep(5)
@@ -149,13 +133,27 @@ class Booking(webdriver.Chrome):
             if(self.count_stars_in_starbox(starBox,minStars)):
                 starBoxes.append(starBox)
 
-        print(f"PRONADENO STARBOXA: {len(starBoxes)}")
         return (len(starBoxes) == len(properties))
 
     def count_stars_in_starbox(self, starbox, minCount):
         stars = starbox.find_elements(By.CLASS_NAME, '_3ae5d40db')
 
         if(len(stars) >= minCount):
+            return True
+        return False
+
+    def check_if_all_are_beachfronts(self):
+        beachfronts_confirmed = 0
+        self.implicitly_wait(30)
+        beachfronts = self.find_elements(By.CLASS_NAME, 'aa8aca3756')
+
+        for beachfront in beachfronts:
+            self.implicitly_wait(7)
+            inner_HTML = beachfront.get_attribute('innerHTML').strip()
+            if inner_HTML == 'Beachfront':
+                beachfronts_confirmed += 1
+
+        if (beachfronts_confirmed == len(beachfronts)):
             return True
         return False
 
