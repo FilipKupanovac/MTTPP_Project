@@ -4,7 +4,7 @@ Project made for college course named 'Metode i Tehnike Testiranja Programske Po
 ## Prerequisites:
  - Python version 3.8.10 installed
  - IDE or Text Editor configured with Python Installed (e.g. PyCharm)
- - Pip Package Manager #####(use `pip install selenium`)#####
+ - Pip Package Manager
  - Driver for launching the automation, ChromeDriver used
    - Be sure to match the version of Chrome you have
    - [Download From this URL](https://chromedriver.storage.googleapis.com/index.html)
@@ -18,7 +18,7 @@ ___
    - modify line 12, default driver_path value
  - Add your `python.exe` parent folder path to environment variable 'Path' if not added during Python installation
 
-##Testing the project
+## Testing the project
  - Tests can be run through your IDE or CLI (Command Line Interface)
    - To run the test through CLI, you have to navigate to project's root folder and type `python -m unittest`
  
